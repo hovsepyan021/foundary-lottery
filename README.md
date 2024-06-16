@@ -1,3 +1,11 @@
+# Random Raffle contract
+
+1) User can enter a lottery (buy a ticket)
+2) After X period of time lottery will be close and winner will be picked. All money will go to winner.
+3) We will use
+   1) Chainlink VRF -> for randomness
+   2) Chainlink Automation -> for closing lottery
+
 ## Foundry
 
 **Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
