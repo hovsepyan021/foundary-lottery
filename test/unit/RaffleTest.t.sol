@@ -55,6 +55,28 @@ contract RaffleTest is Test {
         vm.expectRevert(Raffle.Raffle__NotOpen.selector);
         hoax(PLAYER, USER_BALANE);
         raffle.enterRaffle{value: 2 ether}();
+    }
 
+    function testCheckUpKeepTimeNotPassed() public {
+        (bool isUpkeepNeeded,) = raffle.checkUpkeep("0x0");
+        assertFalse(isUpkeepNeeded);
+    }
+
+    function testCheckUpKeepNoPlayers() public {
+        (,uint256 lotteryInterval,,,,,) = helperConfig.activeConfig();
+        vm.warp(block.timestamp + lotteryInterval);
+        vm.roll(block.number + 1);
+        (bool isUpkeepNeeded,) = raffle.checkUpkeep("0x0");
+        assertFalse(isUpkeepNeeded);
+    }
+
+    function testCheckUpKeep_happyPath() public {
+        hoax(PLAYER, USER_BALANE);
+        raffle.enterRaffle{value: 1 ether}();
+        (,uint256 lotteryInterval,,,,,) = helperConfig.activeConfig();
+        vm.warp(block.timestamp + lotteryInterval);
+        vm.roll(block.number + 1);
+        (bool isUpkeepNeeded,) = raffle.checkUpkeep("0x0");
+        assertTrue(isUpkeepNeeded);
     }
 }
