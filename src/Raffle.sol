@@ -120,4 +120,13 @@ contract Raffle is VRFConsumerBaseV2 {
             revert Raffle__UpkeepNotNeeded(address(this).balance, s_players.length, uint256(s_raffleState));
         }
     }
+
+    function getState() external returns(RaffleState) {
+        return s_raffleState;
+    }
+
+    function getPlayers() external returns(address  payable[] memory) {
+        return s_players;
+    }
+
 }
