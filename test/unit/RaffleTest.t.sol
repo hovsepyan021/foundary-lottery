@@ -48,7 +48,7 @@ contract RaffleTest is Test {
     function testRevertEnterWhenWinnerIsCalculating() public {
         hoax(PLAYER, USER_BALANCE);
         raffle.enterRaffle{value: 1 ether}();
-        (,uint256 lotteryInterval,,,,,) = helperConfig.activeConfig();
+        (,uint256 lotteryInterval,,,,,,) = helperConfig.activeConfig();
         vm.warp(block.timestamp + lotteryInterval);
         vm.roll(block.number + 1);
 
@@ -65,7 +65,7 @@ contract RaffleTest is Test {
     }
 
     function testCheckUpKeepNoPlayers() public {
-        (,uint256 lotteryInterval,,,,,) = helperConfig.activeConfig();
+        (,uint256 lotteryInterval,,,,,,) = helperConfig.activeConfig();
         vm.warp(block.timestamp + lotteryInterval);
         vm.roll(block.number + 1);
         (bool isUpkeepNeeded,) = raffle.checkUpkeep("0x0");
@@ -75,7 +75,7 @@ contract RaffleTest is Test {
     function testCheckUpKeep_happyPath() public {
         hoax(PLAYER, USER_BALANCE);
         raffle.enterRaffle{value: 1 ether}();
-        (,uint256 lotteryInterval,,,,,) = helperConfig.activeConfig();
+        (,uint256 lotteryInterval,,,,,,) = helperConfig.activeConfig();
         vm.warp(block.timestamp + lotteryInterval);
         vm.roll(block.number + 1);
         (bool isUpkeepNeeded,) = raffle.checkUpkeep("0x0");
@@ -95,7 +95,7 @@ contract RaffleTest is Test {
     function testPerformUpKeepEventEmitted() public {
         hoax(PLAYER, USER_BALANCE);
         raffle.enterRaffle{value: 1 ether}();
-        (,uint256 lotteryInterval,,,,,) = helperConfig.activeConfig();
+        (,uint256 lotteryInterval,,,,,,) = helperConfig.activeConfig();
         vm.warp(block.timestamp + lotteryInterval);
         vm.roll(block.number + 1);
 
@@ -110,14 +110,14 @@ contract RaffleTest is Test {
     modifier raffleEnteredAndTimePassed() {
         hoax(PLAYER, USER_BALANCE);
         raffle.enterRaffle{value: 1 ether}();
-        (,uint256 lotteryInterval,,,,,) = helperConfig.activeConfig();
+        (,uint256 lotteryInterval,,,,,,) = helperConfig.activeConfig();
         vm.warp(block.timestamp + lotteryInterval);
         vm.roll(block.number + 1);
         _;
     }
 
     function testFulfillRandomWordsCanBeCalledOnlyAfterPerformUpkeep(uint256 requestId) public raffleEnteredAndTimePassed {
-        (,,address vrfCoordinator,,,,) = helperConfig.activeConfig();
+        (,,address vrfCoordinator,,,,,) = helperConfig.activeConfig();
 
         vm.expectRevert("nonexistent request");
         VRFCoordinatorV2Mock(vrfCoordinator).fulfillRandomWords(requestId, address(raffle));
@@ -139,7 +139,7 @@ contract RaffleTest is Test {
         Vm.Log[] memory logs = vm.getRecordedLogs();
         bytes32 requestId = logs[1].topics[1];
 
-        (,,address vrfCoordinator,,,,) = helperConfig.activeConfig();
+        (,,address vrfCoordinator,,,,,) = helperConfig.activeConfig();
 
         VRFCoordinatorV2Mock(vrfCoordinator).fulfillRandomWords(uint256(requestId), address(raffle));
 
