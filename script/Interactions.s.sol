@@ -47,7 +47,7 @@ contract FundSubscription is Script {
             VRFCoordinatorV2Mock(vrfCoordinator).fundSubscription(subId, FUND_AMOUNT);
             vm.stopBroadcast();
         } else {
-            vm.startBroadcast();
+            vm.startBroadcast(deployerKey);
             LinkToken(link).transferAndCall(vrfCoordinator, FUND_AMOUNT, abi.encode(subId));
             vm.stopBroadcast();
         }
